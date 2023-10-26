@@ -20,6 +20,7 @@ SYSTEM_MODE(MANUAL);
 SYSTEM_THREAD(ENABLED);
 Ultrasonic ultrasonic(D19);
 
+
 //variables:
 int color;
 int humidRH;
@@ -38,6 +39,7 @@ int currentTime;
 int lastSecond; 
 int humidityCase;
 int RangeInCentimeters;
+bool lights;
 
 
 // hue lights number:
@@ -53,13 +55,13 @@ const int WEMO4=4;
 const int WEMO0=0;
 
 //Encoder pins:
-const int BUTTONPIN=D15;
+const int SWITCHPIN=D15;
 //const int PINA=D9;
 //const int PINB=D8;
 const int REDPIN= D18;
 const int BLUEPIN= D16;
 const int GREENPIN= D17;
-
+Button myButton (SWITCHPIN);
 
 //colors arrays:
 int Carbon [][3] = { {2, 0, 36}, {76, 0, 255}, {125, 0, 149}, {31, 255, 0}, {123, 255, 0}, {255, 226, 0}, {255, 186, 0}, {255, 0, 0}, {213, 0, 0}};
@@ -70,7 +72,6 @@ int Nitrogen [][3] = {{130, 0, 179}, {130, 0, 197}, {88, 0, 255}, {0, 38, 255}, 
 int CarbonHue [] [3] = { {44113, 125, 35}, {46836,  125, 255}, {52645,  125, 148}, {20513,  125, 255}, {16519,  125, 255}, {9621,  125, 255}, {7987,  125, 255}, {0,  125, 255}, {0,  125, 212} };
 // finish others!!
 
-Button myButton (BUTTONPIN);
 Adafruit_BME280 bme;
 #define OLED_RESET D4
 Adafruit_SSD1306 display (OLED_RESET);
@@ -103,19 +104,23 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
  status=bme.begin (0x76);
     delay(2000);
 
+//encoder setup
+pinMode (SWITCHPIN,INPUT);
+pinMode (REDPIN,OUTPUT);
+pinMode (GREENPIN,OUTPUT);
 
 }
 
 void loop() {
 
 // clear OLED screen:
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor (0,25);
-  display.printf (">Alchemy<");
-  display.display();
-  delay(2000);
+  // display.clearDisplay();
+  // display.setTextSize(2);
+  // display.setTextColor(WHITE);
+  // display.setCursor (0,25);
+  // display.printf (">Alchemy<");
+  // display.display();
+  // delay(2000);
 
   display.clearDisplay();
   display.setTextSize(2);
@@ -123,7 +128,7 @@ void loop() {
   display.setCursor (0,10);
   display.printf ("Press \n for \n Oracle");
   display.display();
-  delay(2000);
+  // delay(2000);
 
   //BME reading
   humidRH=bme.readHumidity ();
@@ -165,47 +170,34 @@ switch (humidityCase) {
   wemoWrite (WEMO4,LOW);
 
 }
-// if (humidRH>65) {
-//   Serial.printf ("BME trigger /n");
- 
 
-// changeState=!changeState;
+currentTime = millis ();
 
-// if (changeState) {
-//    while (cm<10) {
-//      Serial.printf ("Ranger trigger /n");
-//    for (c=0; c<=8; c++) {
-//       for (c=8; c>=0; c--) {
-//   setHue (BULB5, true, CarbonHue [c] [0], CarbonHue [c] [1], CarbonHue [c] [2]); 
-//          }  
-//         }
-//       } 
-//     }
-// }
-// else {
-//   //humidRH=bme.readHumidity ();
-//    // Serial.printf ("%i \n", humidRH);
+if (myButton.isClicked ()) {
+  lights=!lights;
+}
 
-//   for (i=0; i<=255; i=i+15) {
-// setHue (BULB5, true, HueIndigo, 125,i);
+if (lights){
+  
+  if (( currentTime - lastSecond ) >1000) {
+      lastSecond = millis ();
+      digitalWrite (GREENPIN,LOW);
+      Serial.printf ("button is pressed green \n");
+      }
 
-// if (humidRH>65) {
-//   break;
-// }
+  if (( currentTime - lastSecond ) >1000) {
+      lastSecond = millis ();
+        digitalWrite (REDPIN,LOW);
+        Serial.printf ("button is pressed red \n");
+  }
 
-//     }
-//  for (int y=255; y>=0; y=y-15) {
-// setHue (BULB5, true, HueIndigo, 125,y);
+  if (( currentTime - lastSecond ) >1000) {
+      lastSecond = millis ();
+        digitalWrite (BLUEPIN,LOW);
+         Serial.printf ("button is pressed blue \n");
+  }
 
-
-// if (humidRH>65) {
-//   break;
-// }
-//   }
-
-
-// }
-
+}
 
 }
 
