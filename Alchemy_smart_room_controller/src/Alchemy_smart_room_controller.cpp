@@ -27,7 +27,6 @@ int brightness;
 bool status;
 bool changeState;
 int c;
-int cc;
 int o;
 int h;
 int n;
@@ -48,6 +47,10 @@ const int BULB3=3;
 const int BULB4=4;
 const int BULB5=5;
 const int BULB6=6;
+
+//wemo numbers:
+const int WEMO4=4;
+const int WEMO0=0;
 
 //Encoder pins:
 const int BUTTONPIN=D15;
@@ -105,9 +108,22 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
 void loop() {
 
-//clear OLED screen:
-  //display.clearDisplay();
+// clear OLED screen:
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor (0,25);
+  display.printf (">Alchemy<");
+  display.display();
+  delay(2000);
 
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor (0,10);
+  display.printf ("Press \n for \n Oracle");
+  display.display();
+  delay(2000);
 
   //BME reading
   humidRH=bme.readHumidity ();
@@ -133,6 +149,8 @@ switch (humidityCase) {
     while (RangeInCentimeters<10) {
       Serial.printf ("someone is close");
       setHue (BULB1, true, CarbonHue [c%8] [0], CarbonHue [c%8] [1], CarbonHue [c%8] [2]);
+      wemoWrite (WEMO0,HIGH);
+      wemoWrite (WEMO4,HIGH);
       RangeInCentimeters = ultrasonic.MeasureInCentimeters(); // two measurements should keep an interval
 	    Serial.printf("The distance to obstacles in front is: %i\n",RangeInCentimeters);	
 	    delay(250);
@@ -143,6 +161,8 @@ switch (humidityCase) {
   case 0:
   setHue (BULB1, true, HueIndigo,i%255, 125); 
   i=i+15;
+  wemoWrite (WEMO0,LOW);
+  wemoWrite (WEMO4,LOW);
 
 }
 // if (humidRH>65) {

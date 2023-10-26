@@ -11,7 +11,6 @@ SYSTEM_MODE(SEMI_AUTOMATIC);
 SYSTEM_THREAD(ENABLED);
 Ultrasonic ultrasonic(D19);
 
-int RangeInCentimeters;
 
 void setup() {
 	Serial.begin(9600);
