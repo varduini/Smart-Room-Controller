@@ -14,6 +14,7 @@
 #include "Adafruit_GFX.h" //don't install this one, included in SSD1306
 #include "Adafruit_SSD1306.h"
 #include "Grove-Ultrasonic-Ranger.h"
+#include <neopixel.h> 
 
 
 SYSTEM_MODE(MANUAL);
@@ -42,6 +43,7 @@ int RangeInCentimeters;
 bool lights;
 int BUTTONINPUT;
 char randNumber;
+const int PIXELCOUNT = 30; 
 
 
 // hue lights number:
@@ -75,13 +77,19 @@ int CarbonHue [] [3] = { {44113, 125, 35}, {46836,  125, 255}, {52645,  125, 148
 // finish others!!
 
 //Oracle array:
-const char Oracle [][20] = {"Carbon","Oxygen", "Hydrogen", "Nitrogen", "Phosporous", "Sulfur", "Flourine", "Calcium", "Magnesium", "Iron"};
+const char Oracle [][20] = {"Carbon","Oxygen", "Hydrogen", "Nitrogen"};
+//"Phosporous", "Sulfur", "Flourine", "Calcium", "Magnesium", "Iron"};
 
 
 Adafruit_BME280 bme;
 #define OLED_RESET D4
 Adafruit_SSD1306 display (OLED_RESET);
-//Encoder myEnc (PINA, PINB);
+Adafruit_NeoPixel pixel ( PIXELCOUNT , SPI1 , WS2812B );
+
+//neopixel function:
+void pixelFillStanby ();
+void pixelFillOracle ();
+void pixelFillProximity ();
 
 void setup() {
 
@@ -112,35 +120,23 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
 //encoder setup
 pinMode (SWITCHPIN,INPUT_PULLDOWN);
-//pinMode (REDPIN,OUTPUT);
 pinMode (GREENPIN,OUTPUT);
 pinMode (BLUEPIN,OUTPUT);
+
+//neopixel setup:
+pixel.begin ();
+pixel.show (); 
+pixel.setBrightness (24);
 
 }
 
 void loop() {
 
-// clear OLED screen:
-  // display.clearDisplay();
-  // display.setTextSize(2);
-  // display.setTextColor(WHITE);
-  // display.setCursor (0,25);
-  // display.printf (">Alchemy<");
-  // display.display();
-  // delay(2000);
-
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor (0,5);
-  display.printf ("Press \n for \n Oracle");
-  display.display();
-  // delay(2000);
+display.clearDisplay();
 
   //BME reading
   humidRH=bme.readHumidity ();
     Serial.printf ("%i \n", humidRH);
-  
 
 if (humidRH>50) {
 humidityCase=1; 
@@ -186,10 +182,70 @@ if ( BUTTONINPUT == 1 ) {
   Serial.printf (" Button is pressed \n");
   digitalWrite (GREENPIN,LOW);
   digitalWrite (BLUEPIN,HIGH);
-  //digitalWrite (REDPIN,HIGH);
-  randNumber = random (0, 9) ;
+  randNumber = random (0, 3) ; 
+   //add more!!
   Serial.printf ("The number is = %i \n",randNumber );
-  Serial.printf ("The oracle is %s \n",Oracle[randNumber] );
+  //setHue (BULB1, true, HueViolet,255, 255);
+  switch (randNumber) {
+
+    case 0: {
+      for (i=0; i<9; i++) {
+        red= Carbon[i] [0];
+        green= Carbon [i] [1];
+        blue= Carbon [i] [2];
+        pixel.setPixelColor (i, red, green, blue);
+        pixel.show ();
+       }
+
+    }
+    case 1: {
+     for (i=0; i<9; i++) {
+        red= Oxygen [i] [0];
+        green= Oxygen [i] [1];
+        blue= Oxygen [i] [2];
+        pixel.setPixelColor (i, red, green, blue);
+        pixel.show ();
+       }
+    }
+
+    case 2: {
+        for (i=0; i<9; i++) {
+        red= Hydrogen [i] [0];
+        green= Hydrogen [i] [1];
+        blue= Hydrogen [i] [2];
+        pixel.setPixelColor (i, red, green, blue);
+        pixel.show ();
+       }
+    }
+
+    case 3: {
+      for (i=0; i<9; i++) {
+        red= Nitrogen [i] [0];
+        green= Nitrogen [i] [1];
+        blue= Nitrogen [i] [2];
+        pixel.setPixelColor (i, red, green, blue);
+        pixel.show ();
+       }
+    }
+
+  }
+
+  //to get colors for neopixels
+// for (i=0; i<30; i++) {
+// red= Oracle[randNumber][i], [0];
+// green= Oracle[randNumber][i], [1];
+// blue= Oracle[randNumber] [i], [2];
+// pixel.setPixelColor (i, red, green, blue);
+// }
+
+// NEED OTHER ARRAYS!!
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor (0,5);
+  display.printf ("The oracle is %s \n",Oracle[randNumber] );
+  display.display();
+  delay (2000);
 
 }
 
@@ -198,8 +254,14 @@ else {
   digitalWrite (BLUEPIN,LOW);
   digitalWrite (GREENPIN,HIGH);
   //digitalWrite (REDPIN,HIGH);
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor (0,5);
+  display.printf ("Press \n for \n Oracle");
+  display.display();
 }
-
+}
 
 
 // if (myButton.isClicked ()) {
@@ -235,24 +297,6 @@ else {
   //     digitalWrite (BLUEPIN,LOW);
   //        Serial.printf ("button is pressed blue \n");
   // }
-
-}
-
-
-
-
-
-
-//to get colors for neopixels
-//  for (i=0; i<9; i++) {
-//   red= Carbon [i], [0];
-//   green= Carbon [i], [1];
-//   blue= Carbon [i], [2];
-//   pixel.SetPixelColor (i, red, green, blue);
-// }
-// NEED OTHER ARRAYS!!
-
-
   //   setHue (BULB2, true, Hydrogen, 255,255); 
   //   for (h=0; h<=3; h++);
   //     for (h=3; h>0; h--);
