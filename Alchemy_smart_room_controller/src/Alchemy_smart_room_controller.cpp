@@ -40,6 +40,8 @@ int lastSecond;
 int humidityCase;
 int RangeInCentimeters;
 bool lights;
+int BUTTONINPUT;
+char randNumber;
 
 
 // hue lights number:
@@ -71,6 +73,10 @@ int Nitrogen [][3] = {{130, 0, 179}, {130, 0, 197}, {88, 0, 255}, {0, 38, 255}, 
 
 int CarbonHue [] [3] = { {44113, 125, 35}, {46836,  125, 255}, {52645,  125, 148}, {20513,  125, 255}, {16519,  125, 255}, {9621,  125, 255}, {7987,  125, 255}, {0,  125, 255}, {0,  125, 212} };
 // finish others!!
+
+//Oracle array:
+const char Oracle [][20] = {"Carbon","Oxygen", "Hydrogen", "Nitrogen", "Phosporous", "Sulfur", "Flourine", "Calcium", "Magnesium", "Iron"};
+
 
 Adafruit_BME280 bme;
 #define OLED_RESET D4
@@ -105,9 +111,10 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     delay(2000);
 
 //encoder setup
-pinMode (SWITCHPIN,INPUT);
-pinMode (REDPIN,OUTPUT);
+pinMode (SWITCHPIN,INPUT_PULLDOWN);
+//pinMode (REDPIN,OUTPUT);
 pinMode (GREENPIN,OUTPUT);
+pinMode (BLUEPIN,OUTPUT);
 
 }
 
@@ -125,7 +132,7 @@ void loop() {
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor (0,10);
+  display.setCursor (0,5);
   display.printf ("Press \n for \n Oracle");
   display.display();
   // delay(2000);
@@ -171,35 +178,67 @@ switch (humidityCase) {
 
 }
 
-currentTime = millis ();
+// currentTime = millis ();
 
-if (myButton.isClicked ()) {
-  lights=!lights;
-}
+BUTTONINPUT=digitalRead(SWITCHPIN);
 
-if (lights){
-  
-  if (( currentTime - lastSecond ) >1000) {
-      lastSecond = millis ();
-      digitalWrite (GREENPIN,LOW);
-      Serial.printf ("button is pressed green \n");
-      }
-
-  if (( currentTime - lastSecond ) >1000) {
-      lastSecond = millis ();
-        digitalWrite (REDPIN,LOW);
-        Serial.printf ("button is pressed red \n");
-  }
-
-  if (( currentTime - lastSecond ) >1000) {
-      lastSecond = millis ();
-        digitalWrite (BLUEPIN,LOW);
-         Serial.printf ("button is pressed blue \n");
-  }
+if ( BUTTONINPUT == 1 ) {
+  Serial.printf (" Button is pressed \n");
+  digitalWrite (GREENPIN,LOW);
+  digitalWrite (BLUEPIN,HIGH);
+  //digitalWrite (REDPIN,HIGH);
+  randNumber = random (0, 9) ;
+  Serial.printf ("The number is = %i \n",randNumber );
+  Serial.printf ("The oracle is %s \n",Oracle[randNumber] );
 
 }
 
+else {
+  Serial.printf (" Button is not pressed \n");
+  digitalWrite (BLUEPIN,LOW);
+  digitalWrite (GREENPIN,HIGH);
+  //digitalWrite (REDPIN,HIGH);
 }
+
+
+
+// if (myButton.isClicked ()) {
+//   lights=!lights;
+// }
+
+// if (lights){
+//   //if (( currentTime - lastSecond ) >1000) {
+//     //  lastSecond = millis ();
+//       digitalWrite (GREENPIN,LOW);
+//       digitalWrite (BLUEPIN,HIGH);
+//       Serial.printf ("button is pressed \n");
+// }
+
+// else {
+//   digitalWrite (BLUEPIN,LOW);
+//   digitalWrite (GREENPIN,HIGH);
+//   Serial.printf ("button is not pressed \n");
+// }
+
+  // if (( currentTime - lastSecond ) >2000) {
+  //     lastSecond = millis ();
+  //     digitalWrite (GREENPIN,HIGH);
+  //     digitalWrite (REDPIN,LOW);
+  //     digitalWrite (BLUEPIN,HIGH);
+  //       Serial.printf ("button is pressed red \n");
+  // }
+
+  // if (( currentTime - lastSecond ) >3000) {
+  //     lastSecond = millis ();
+  //     digitalWrite (GREENPIN,HIGH);
+  //     digitalWrite (REDPIN,HIGH);
+  //     digitalWrite (BLUEPIN,LOW);
+  //        Serial.printf ("button is pressed blue \n");
+  // }
+
+}
+
+
 
 
 
