@@ -178,14 +178,16 @@ switch (humidityCase) {
 
 BUTTONINPUT=digitalRead(SWITCHPIN);
 
-if ( BUTTONINPUT == 1 ) {
+if (BUTTONINPUT == 1 ) {
   Serial.printf (" Button is pressed \n");
   digitalWrite (GREENPIN,LOW);
   digitalWrite (BLUEPIN,HIGH);
   randNumber = random (0, 3) ; 
    //add more!!
+
   Serial.printf ("The number is = %i \n",randNumber );
   //setHue (BULB1, true, HueViolet,255, 255);
+
   switch (randNumber) {
 
     case 0: {
@@ -193,52 +195,53 @@ if ( BUTTONINPUT == 1 ) {
         red= Carbon[i] [0];
         green= Carbon [i] [1];
         blue= Carbon [i] [2];
-        pixel.setPixelColor (i, red, green, blue);
+        pixel.setPixelColor (3*i, red, green, blue);
+        Serial.printf ("pixels on carbon");
         pixel.show ();
        }
+    break;
 
     }
     case 1: {
-     for (i=0; i<9; i++) {
+     for (i=0; i<16; i++) {
         red= Oxygen [i] [0];
         green= Oxygen [i] [1];
         blue= Oxygen [i] [2];
         pixel.setPixelColor (i, red, green, blue);
+        Serial.printf ("pixels on oxygen");
         pixel.show ();
        }
+    break;
     }
 
     case 2: {
-        for (i=0; i<9; i++) {
-        red= Hydrogen [i] [0];
-        green= Hydrogen [i] [1];
-        blue= Hydrogen [i] [2];
-        pixel.setPixelColor (i, red, green, blue);
-        pixel.show ();
+        for (i=0; i<4; i++) {
+          red= Hydrogen [i] [0];
+          green= Hydrogen [i] [1];
+          blue= Hydrogen [i] [2];
+          pixel.setPixelColor (7*i, red, green, blue);
+          Serial.printf ("pixels on hydrogen");
+          pixel.show ();
        }
+       break;
     }
 
     case 3: {
-      for (i=0; i<9; i++) {
+      for (i=0; i<17; i++) {
         red= Nitrogen [i] [0];
         green= Nitrogen [i] [1];
         blue= Nitrogen [i] [2];
         pixel.setPixelColor (i, red, green, blue);
+        Serial.printf ("pixels on nitrogen");
         pixel.show ();
        }
+      
+      break;
     }
-
   }
 
-  //to get colors for neopixels
-// for (i=0; i<30; i++) {
-// red= Oracle[randNumber][i], [0];
-// green= Oracle[randNumber][i], [1];
-// blue= Oracle[randNumber] [i], [2];
-// pixel.setPixelColor (i, red, green, blue);
-// }
+// ADD OTHER ARRAYS!!
 
-// NEED OTHER ARRAYS!!
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
@@ -246,7 +249,7 @@ if ( BUTTONINPUT == 1 ) {
   display.printf ("The oracle is %s \n",Oracle[randNumber] );
   display.display();
   delay (2000);
-
+  pixel.clear ();
 }
 
 else {
@@ -262,7 +265,6 @@ else {
   display.display();
 }
 }
-
 
 // if (myButton.isClicked ()) {
 //   lights=!lights;
@@ -281,22 +283,6 @@ else {
 //   digitalWrite (GREENPIN,HIGH);
 //   Serial.printf ("button is not pressed \n");
 // }
-
-  // if (( currentTime - lastSecond ) >2000) {
-  //     lastSecond = millis ();
-  //     digitalWrite (GREENPIN,HIGH);
-  //     digitalWrite (REDPIN,LOW);
-  //     digitalWrite (BLUEPIN,HIGH);
-  //       Serial.printf ("button is pressed red \n");
-  // }
-
-  // if (( currentTime - lastSecond ) >3000) {
-  //     lastSecond = millis ();
-  //     digitalWrite (GREENPIN,HIGH);
-  //     digitalWrite (REDPIN,HIGH);
-  //     digitalWrite (BLUEPIN,LOW);
-  //        Serial.printf ("button is pressed blue \n");
-  // }
   //   setHue (BULB2, true, Hydrogen, 255,255); 
   //   for (h=0; h<=3; h++);
   //     for (h=3; h>0; h--);
