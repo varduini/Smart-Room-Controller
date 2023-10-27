@@ -44,7 +44,8 @@ bool lights;
 int BUTTONINPUT;
 char randNumber;
 const int PIXELCOUNT = 30; 
-
+int y;
+int p, r, g, b, m;
 
 // hue lights number:
 const int BULB1=1;
@@ -167,12 +168,38 @@ switch (humidityCase) {
     }
 
   case 0:
+  // currentTime = millis ();
   setHue (BULB1, true, HueIndigo,i%255, 125); 
   i=i+15;
   wemoWrite (WEMO0,LOW);
   wemoWrite (WEMO4,LOW);
+  
+// if (( currentTime - lastSecond ) >200) {
+//         lastSecond = millis ();
+  
+  m=p%30;
+  r=p%255;
+  g=p%255;
+  b=p%255;
+  p++;
+ pixel.setPixelColor (m, 3*r, g, 255);
 
-}
+    //for (int y=0; y<=255; y=y+8) {
+      
+        //pixel.setPixelColor (p, 3*y%255, y%255, 255);
+        // y=y+8;
+        //p++;
+
+        Serial.printf ("value of %i\n", p);
+       
+        pixel.show ();
+        
+
+        }
+  
+       
+
+
 
 // currentTime = millis ();
 
@@ -183,6 +210,7 @@ if (BUTTONINPUT == 1 ) {
   digitalWrite (GREENPIN,LOW);
   digitalWrite (BLUEPIN,HIGH);
   randNumber = random (0, 3) ; 
+  pixel.clear();
    //add more!!
 
   Serial.printf ("The number is = %i \n",randNumber );
@@ -263,8 +291,9 @@ else {
   display.setCursor (0,5);
   display.printf ("Press \n for \n Oracle");
   display.display();
-}
-}
+    }
+  }
+
 
 // if (myButton.isClicked ()) {
 //   lights=!lights;
